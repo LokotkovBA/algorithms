@@ -142,33 +142,45 @@ namespace algos
 		mem[target] = shortestCombination;
 		return shortestCombination;
 	}
+
+	bool canConstruct(std::vector<std::string>& words, std::string target, std::unordered_map<std::string, bool>* mem = new std::unordered_map<std::string, bool>)
+	{
+		if (mem->find(target) != mem->end())
+			return (*mem)[target];
+		if (target == "")
+			return true;
+
+		for (std::string word : words)
+		{
+			if (target.find(word) == 0)
+			{
+				std::string suffix = target.substr(word.size());
+				if (canConstruct(words, suffix, mem))
+				{
+					mem->insert({ target, true });
+					return true;
+				}
+			}
+
+		}
+
+		mem->insert({ target, false });
+		return false;
+	}
 }
 
 void main()
 {
-	std::unordered_map<int, std::vector<int>*> mems;
-	std::vector<int> nums = { 2,3 };
-	//algos::log(algos::bestSumBF(nums, 7));
-	algos::log(algos::bestSumDP(nums, 7, mems));
-	mems.clear();
+	std::vector<std::string> words = { "ab", "abc", "cd", "def", "abcd"};
+	std::cout << algos::canConstruct(words, "abcdef") << std::endl;
 
-	nums = { 5,3,4,7 };
-	//algos::log(algos::bestSumBF(nums, 7));
-	algos::log(algos::bestSumDP(nums, 7, mems));
-	mems.clear();
+	words = { "bo", "rd", "ate", "t", "ska", "sk", "boar"};
+	std::cout << algos::canConstruct(words, "skateboard") << std::endl;
 
-	nums = { 1, 4, 5};
-	//algos::log(algos::bestSumBF(nums, 8));
-	algos::log(algos::bestSumDP(nums, 8, mems));
-	mems.clear();
+	words = { "a", "p", "ent", "enter", "ot", "o", "t"};
+	std::cout << algos::canConstruct(words, "enterapotentpot") << std::endl;
 
-	nums = { 2,3,5 };
-	//algos::log(algos::bestSumBF(nums, 8));
-	algos::log(algos::bestSumDP(nums, 8, mems));
-	mems.clear();
-
-	nums = {1, 2, 5, 25};
-	//algos::log(algos::bestSumBF(nums, 100));
-	algos::log(algos::bestSumDP(nums, 100, mems));
-	mems.clear();
+	words = { "e", "eee", "eeee", "eeeee", "eeeeeeee" };
+	std::cout << algos::canConstruct(words, "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeef") << std::endl;
+	
 }
