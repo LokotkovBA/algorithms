@@ -26,7 +26,15 @@
 *.a
 *.lib
 
+# VS studio files
+*.sln
+*.vcxproj*
+
 # Executables
 *.exe
 *.out
 *.app
+
+# Folders
+/x64
+/.vs
