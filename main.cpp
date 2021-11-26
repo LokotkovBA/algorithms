@@ -143,7 +143,7 @@ namespace algos
 		return shortestCombination;
 	}
 
-	bool canConstruct(std::vector<std::string>& words, std::string target, std::shared_ptr<std::unordered_map<std::string, bool>> mem = std::make_shared<std::unordered_map<std::string, bool>>())
+	bool canConstruct(std::vector<std::string>& words, std::string& target, std::shared_ptr<std::unordered_map<std::string, bool>> mem = std::make_shared<std::unordered_map<std::string, bool>>())
 	{
 		if (mem->find(target) != mem->end())
 			return (*mem)[target];
@@ -173,15 +173,19 @@ void main()
 {
 	
 	std::vector<std::string> words = { "ab", "abc", "cd", "def", "abcd"};
-	std::cout << algos::canConstruct(words, "abcdef") << std::endl;
+	std::string input_word = "abcdef";
+	std::cout << algos::canConstruct(words, input_word) << std::endl;
 
 	words = { "bo", "rd", "ate", "t", "ska", "sk", "boar"};
-	std::cout << algos::canConstruct(words, "skateboard") << std::endl;
+	input_word = "skateboard";
+	std::cout << algos::canConstruct(words, input_word) << std::endl;
 
 	words = { "a", "p", "ent", "enter", "ot", "o", "t"};
-	std::cout << algos::canConstruct(words, "enterapotentpot") << std::endl;
+	input_word = "enterapotentpot";
+	std::cout << algos::canConstruct(words, input_word) << std::endl;
 
 	words = { "e", "eee", "eeee", "eeeee", "eeeeeeee" };
-	std::cout << algos::canConstruct(words, "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeef") << std::endl;
+	input_word = "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeef";
+	std::cout << algos::canConstruct(words, input_word) << std::endl;
 	
 }
