@@ -150,11 +150,11 @@ namespace algos
 		if (target == "")
 			return true;
 
-		for (std::string word : words)
+		for (int i = 0; i < words.size(); i++)
 		{
-			if (target.find(word) == 0)
+			if (target.find(words[i]) == 0)
 			{
-				std::string suffix = target.substr(word.size());
+				std::string suffix = target.substr(words[i].size());
 				if (canConstruct(words, suffix, mem))
 				{
 					mem->insert({ target, true });
@@ -167,6 +167,28 @@ namespace algos
 		mem->insert({ target, false });
 		return false;
 	}
+
+	int countConstruct(std::vector<std::string>& words, std::string& target, std::shared_ptr<std::unordered_map<std::string, int>> mem = std::make_shared<std::unordered_map<std::string, int>>())
+	{
+		if(mem->find(target) != mem->end())
+			return (*mem)[target];
+		if (target == "")
+			return 1;
+
+		int totalCount = 0;
+		for (int i = 0; i < words.size(); i++)
+		{
+			if (target.find(words[i]) == 0)
+			{
+				std::string suffix = target.substr(words[i].size());
+				int numWaysForRest = countConstruct(words, suffix, mem);
+				totalCount += numWaysForRest;
+			}
+		}
+
+		mem->insert({ target, totalCount });
+		return totalCount;
+	}
 }
 
 void main()
@@ -174,18 +196,22 @@ void main()
 	
 	std::vector<std::string> words = { "ab", "abc", "cd", "def", "abcd"};
 	std::string input_word = "abcdef";
-	std::cout << algos::canConstruct(words, input_word) << std::endl;
+	std::cout << algos::countConstruct(words, input_word) << std::endl;
+
+	words = { "purp", "p", "ur", "le", "purpl" };
+	input_word = "purple";
+	std::cout << algos::countConstruct(words, input_word) << std::endl;
 
 	words = { "bo", "rd", "ate", "t", "ska", "sk", "boar"};
 	input_word = "skateboard";
-	std::cout << algos::canConstruct(words, input_word) << std::endl;
+	std::cout << algos::countConstruct(words, input_word) << std::endl;
 
 	words = { "a", "p", "ent", "enter", "ot", "o", "t"};
 	input_word = "enterapotentpot";
-	std::cout << algos::canConstruct(words, input_word) << std::endl;
+	std::cout << algos::countConstruct(words, input_word) << std::endl;
 
 	words = { "e", "eee", "eeee", "eeeee", "eeeeeeee" };
-	input_word = "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeef";
-	std::cout << algos::canConstruct(words, input_word) << std::endl;
+	input_word = "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
+	std::cout << algos::countConstruct(words, input_word) << std::endl;
 	
 }
