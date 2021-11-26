@@ -143,7 +143,7 @@ namespace algos
 		return shortestCombination;
 	}
 
-	bool canConstruct(std::vector<std::string>& words, std::string target, std::unordered_map<std::string, bool>* mem = new std::unordered_map<std::string, bool>)
+	bool canConstruct(std::vector<std::string>& words, std::string target, std::shared_ptr<std::unordered_map<std::string, bool>> mem = std::make_shared<std::unordered_map<std::string, bool>>())
 	{
 		if (mem->find(target) != mem->end())
 			return (*mem)[target];
@@ -171,6 +171,7 @@ namespace algos
 
 void main()
 {
+	
 	std::vector<std::string> words = { "ab", "abc", "cd", "def", "abcd"};
 	std::cout << algos::canConstruct(words, "abcdef") << std::endl;
 
