@@ -80,6 +80,26 @@ namespace algos
 			std::cout << "nullptr";
 		std::cout << std::endl;
 	}
+	void log(std::shared_ptr<std::vector<std::vector<std::string>>> inp)
+	{
+		if (inp != nullptr)
+		{
+			for (int i = 0; i < inp->size(); i++)
+			{
+				int size = (*inp)[i].size() - 1;
+				for (int j = 0; j < size; j++)
+				{
+					std::cout << (*inp)[i][j] << ", ";
+				}
+				std::cout << (*inp)[i][size];
+				std::cout << std::endl;
+			}
+		}
+			
+		else
+			std::cout << "nullptr";
+		std::cout << std::endl;
+	}
 
 	std::vector<int>* bestSumBF(std::vector<int>& nums, int target)
 	{
@@ -189,29 +209,67 @@ namespace algos
 		mem->insert({ target, totalCount });
 		return totalCount;
 	}
+
+	std::shared_ptr<std::vector<std::vector<std::string>>> allCounstruct(std::vector<std::string>& words, std::string& target, std::shared_ptr<std::unordered_map<std::string, std::shared_ptr<std::vector<std::vector<std::string>>>>> mem = std::make_shared<std::unordered_map<std::string, std::shared_ptr<std::vector<std::vector<std::string>>>>>())
+	{
+		if (mem->find(target) != mem->end())
+			return (*mem)[target];
+		if (target == "")
+		{
+			std::shared_ptr<std::vector<std::vector<std::string>>> output = std::make_shared<std::vector<std::vector<std::string>>>(1);
+			return output;
+		}
+
+		std::shared_ptr<std::vector<std::vector<std::string>>> result = std::make_shared<std::vector<std::vector<std::string>>>();
+		for (int i = 0; i < words.size(); i++)
+		{
+			if (target.find(words[i]) == 0)
+			{
+				std::string suffix = target.substr(words[i].size());
+				std::shared_ptr<std::vector<std::vector<std::string>>> waysToConstruct = allCounstruct(words, suffix, mem);
+				int size = waysToConstruct->size();
+				if (size != 0)
+				{
+					for (int j = 0; j < size; j++)
+					{
+						(*waysToConstruct)[j].push_back(words[i]);
+						std::swap((*waysToConstruct)[j][(*waysToConstruct)[j].size() - 1], (*waysToConstruct)[j][0]);
+						result->push_back((*waysToConstruct)[j]);
+					}
+				}		
+			}
+		}
+		(*mem)[target] = result;
+		return result;
+	}
 }
 
-void main()
+int main()
 {
 	
 	std::vector<std::string> words = { "ab", "abc", "cd", "def", "abcd"};
 	std::string input_word = "abcdef";
-	std::cout << algos::countConstruct(words, input_word) << std::endl;
+	std::cout << input_word << std::endl;
+	algos::log(algos::allCounstruct(words, input_word));
 
 	words = { "purp", "p", "ur", "le", "purpl" };
 	input_word = "purple";
-	std::cout << algos::countConstruct(words, input_word) << std::endl;
+	std::cout << input_word << std::endl;
+	algos::log(algos::allCounstruct(words, input_word));
 
 	words = { "bo", "rd", "ate", "t", "ska", "sk", "boar"};
 	input_word = "skateboard";
-	std::cout << algos::countConstruct(words, input_word) << std::endl;
+	std::cout << input_word << std::endl;
+	algos::log(algos::allCounstruct(words, input_word));
 
 	words = { "a", "p", "ent", "enter", "ot", "o", "t"};
 	input_word = "enterapotentpot";
-	std::cout << algos::countConstruct(words, input_word) << std::endl;
+	std::cout << input_word << std::endl;
+	algos::log(algos::allCounstruct(words, input_word));
 
 	words = { "e", "eee", "eeee", "eeeee", "eeeeeeee" };
-	input_word = "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
-	std::cout << algos::countConstruct(words, input_word) << std::endl;
+	input_word = "eeeeeeeeeeeeeeeeeeeeeeeee";
+	algos::log(algos::allCounstruct(words, input_word));
 	
+	return 0;
 }
