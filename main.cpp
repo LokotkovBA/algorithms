@@ -71,36 +71,6 @@ namespace algos
 		return nullptr;
 	}
 
-	void log(std::vector<int>* inp)
-	{
-		if (inp != nullptr)
-			for (int i = 0; i < inp->size(); i++)
-				std::cout << (*inp)[i] << ", ";
-		else
-			std::cout << "nullptr";
-		std::cout << std::endl;
-	}
-	void log(std::shared_ptr<std::vector<std::vector<std::string>>> inp)
-	{
-		if (inp != nullptr)
-		{
-			for (int i = 0; i < inp->size(); i++)
-			{
-				int size = (*inp)[i].size() - 1;
-				for (int j = 0; j < size; j++)
-				{
-					std::cout << (*inp)[i][j] << ", ";
-				}
-				std::cout << (*inp)[i][size];
-				std::cout << std::endl;
-			}
-		}
-			
-		else
-			std::cout << "nullptr";
-		std::cout << std::endl;
-	}
-
 	std::vector<int>* bestSumBF(std::vector<int>& nums, int target)
 	{
 		if (target == 0)
@@ -242,34 +212,85 @@ namespace algos
 		(*mem)[target] = result;
 		return result;
 	}
+
+	unsigned long long fib(int n)
+	{
+		std::vector<unsigned long long > table(n + 1);
+		table[1] = 1;
+		for (int i = 0; i < n; i++)
+		{
+			table[i + 1] += table[i];
+			if (i != n - 1)
+				table[i + 2] += table[i];
+		}
+		return table[n];
+	}
+
+	unsigned long long gridTraveler(int columns, int rows)
+	{
+		std::vector<std::vector<unsigned long long>> table(rows + 1);
+		for (int i = 0; i <= rows; i++)
+			table[i].resize(columns + 1);
+
+		table[1][1] = 1;
+
+		for (int i = 0; i <= rows; i++)
+		{
+			for (int j = 0; j <= columns; j++)
+			{
+				int current = table[i][j];
+				if(j + 1 <= columns) 
+					table[i][j + 1] += current;
+				if (i + 1 <= rows)
+					table[i + 1][j] += current;
+			}
+		}
+
+		return table[rows][columns];
+	}
+}
+
+namespace utils
+{
+	void log(std::vector<int>* inp)
+	{
+		if (inp != nullptr)
+			for (int i = 0; i < inp->size(); i++)
+				std::cout << (*inp)[i] << ", ";
+		else
+			std::cout << "nullptr";
+		std::cout << std::endl;
+	}
+	void log(std::shared_ptr<std::vector<std::vector<std::string>>> inp)
+	{
+		if (inp != nullptr)
+		{
+			for (int i = 0; i < inp->size(); i++)
+			{
+				int size = (*inp)[i].size() - 1;
+				for (int j = 0; j < size; j++)
+				{
+					std::cout << (*inp)[i][j] << ", ";
+				}
+				std::cout << (*inp)[i][size];
+				std::cout << std::endl;
+			}
+		}
+
+		else
+			std::cout << "nullptr";
+		std::cout << std::endl;
+	}
 }
 
 int main()
 {
-	
-	std::vector<std::string> words = { "ab", "abc", "cd", "def", "abcd"};
-	std::string input_word = "abcdef";
-	std::cout << input_word << std::endl;
-	algos::log(algos::allCounstruct(words, input_word));
+	std::cout << algos::gridTraveler(1, 1) << std::endl;
+	std::cout << algos::gridTraveler(2, 3) << std::endl;
+	std::cout << algos::gridTraveler(3, 2) << std::endl;
+	std::cout << algos::gridTraveler(3, 3) << std::endl;
+	std::cout << algos::gridTraveler(18, 18) << std::endl;
 
-	words = { "purp", "p", "ur", "le", "purpl" };
-	input_word = "purple";
-	std::cout << input_word << std::endl;
-	algos::log(algos::allCounstruct(words, input_word));
-
-	words = { "bo", "rd", "ate", "t", "ska", "sk", "boar"};
-	input_word = "skateboard";
-	std::cout << input_word << std::endl;
-	algos::log(algos::allCounstruct(words, input_word));
-
-	words = { "a", "p", "ent", "enter", "ot", "o", "t"};
-	input_word = "enterapotentpot";
-	std::cout << input_word << std::endl;
-	algos::log(algos::allCounstruct(words, input_word));
-
-	words = { "e", "eee", "eeee", "eeeee", "eeeeeeee" };
-	input_word = "eeeeeeeeeeeeeeeeeeeeeeeee";
-	algos::log(algos::allCounstruct(words, input_word));
 	
 	return 0;
 }
