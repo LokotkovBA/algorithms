@@ -248,11 +248,95 @@ namespace algos
 
 		return table[rows][columns];
 	}
+
+	bool canSumTab(int target, std::vector<int>& nums)
+	{
+		std::vector<bool> table(target+1, false);
+		table[0] = true;
+		for (int i = 0; i < target; i++)
+		{
+			if (table[i])
+			{
+				for (int num: nums)
+				{
+					int current = num + i;
+					if (current <= target)
+						table[current] = true;
+				}
+			}
+		}
+
+		return table[target];
+	}
+
+	std::shared_ptr<std::vector<int>> howSumTab(int target, std::vector<int>& nums)
+	{
+		std::vector<std::shared_ptr<std::vector<int>>> table(target + 1, nullptr);
+		table[0] = std::make_shared<std::vector<int>>();
+		for (int i = 0; i < target; i++)
+		{
+			if (table[i] != nullptr)
+			{
+				for (int num : nums)
+				{
+					int current = num + i;
+					if (current <= target)
+					{
+						if (table[current] == nullptr)
+							table[current] = std::make_shared<std::vector<int>>();
+						*table[current] = *table[i];
+						table[current]->push_back(num);
+					}
+				}
+			}
+			
+		}
+
+		return table[target];
+	}
+
+	std::shared_ptr<std::vector<int>> bestSumTab(int target, std::vector<int>& nums)
+	{
+		std::vector<std::shared_ptr<std::vector<int>>> table(target + 1, nullptr);
+		table[0] = std::make_shared<std::vector<int>>();
+		for (int i = 0; i < target; i++)
+		{
+			if (table[i] != nullptr)
+			{
+				for (int num : nums)
+				{
+					int current = num + i;
+					if (current <= target)
+					{
+						if (table[current] == nullptr)
+							table[current] = std::make_shared<std::vector<int>>();
+						std::vector<int> currentArr = *table[i];
+						currentArr.push_back(num);
+						int size = table[current]->size();
+						if (size == 0 || currentArr.size() < size)
+							*table[current] = currentArr;
+					}
+				}
+			}
+
+		}
+
+		return table[target];
+	}
 }
 
 namespace utils
 {
 	void log(std::vector<int>* inp)
+	{
+		if (inp != nullptr)
+			for (int i = 0; i < inp->size(); i++)
+				std::cout << (*inp)[i] << ", ";
+		else
+			std::cout << "nullptr";
+		std::cout << std::endl;
+	}
+	void log(std::shared_ptr<std::vector<int>> inp)
 	{
 		if (inp != nullptr)
 			for (int i = 0; i < inp->size(); i++)
@@ -276,7 +360,6 @@ namespace utils
 				std::cout << std::endl;
 			}
 		}
-
 		else
 			std::cout << "nullptr";
 		std::cout << std::endl;
@@ -285,11 +368,16 @@ namespace utils
 
 int main()
 {
-	std::cout << algos::gridTraveler(1, 1) << std::endl;
-	std::cout << algos::gridTraveler(2, 3) << std::endl;
-	std::cout << algos::gridTraveler(3, 2) << std::endl;
-	std::cout << algos::gridTraveler(3, 3) << std::endl;
-	std::cout << algos::gridTraveler(18, 18) << std::endl;
+	std::vector<int> nums = { 2,3 };
+	utils::log(algos::bestSumTab(7, nums));
+	nums = { 5,3,4,7 };
+	utils::log(algos::bestSumTab(7, nums));
+	nums = { 2,4 };
+	utils::log(algos::bestSumTab(7, nums));
+	nums = { 2,3,5 };
+	utils::log(algos::bestSumTab(8, nums));
+	nums = { 7,14 };
+	utils::log(algos::bestSumTab(300, nums));
 
 	
 	return 0;
