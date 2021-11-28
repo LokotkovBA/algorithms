@@ -323,6 +323,101 @@ namespace algos
 
 		return table[target];
 	}
+
+	bool canConstuctTab(std::vector<std::string>& words, std::string& target)
+	{
+		int targetSize = target.size();
+		std::vector<bool> table(targetSize + 1, false);
+		table[0] = true;
+		for (int i = 0; i < targetSize; i++)
+		{
+			if (table[i])
+			{
+				for (int wNum = 0; wNum < words.size(); wNum++)
+				{
+					int current = i + words[wNum].size();
+					if (target.substr(i, current-i) == words[wNum])
+						table[current] = true;
+				}
+			}
+		}
+		return table[targetSize];
+	}
+
+	int countConstuctTab(std::vector<std::string>& words, std::string& target)
+	{
+		int targetSize = target.size();
+		std::vector<int> table(targetSize + 1, 0);
+		table[0] = 1;
+		for (int i = 0; i < targetSize; i++)
+		{
+			if (table[i] != 0)
+			{
+				for (int wNum = 0; wNum < words.size(); wNum++)
+				{
+					int current = i + words[wNum].size();
+					if (target.substr(i, current - i) == words[wNum])
+						table[current]+= table[i];
+				}
+			}
+		}
+		return table[targetSize];
+	}
+
+	std::shared_ptr<std::vector<std::string*>> howConstruct(std::vector<std::string>& words, std::string& target)
+	{
+		int targetSize = target.size();
+		std::vector<std::shared_ptr<std::vector<std::string*>>> table(targetSize + 1, nullptr);
+		table[0] = std::make_shared<std::vector<std::string*>>();
+		for (int i = 0; i < targetSize; i++)
+		{
+			if (table[i] != nullptr)
+			{
+				for (int wNum = 0; wNum < words.size(); wNum++)
+				{
+					int current = i + words[wNum].size();
+					if (target.substr(i, current - i) == words[wNum])
+					{
+						if (table[current] == nullptr)
+							table[current] = std::make_shared<std::vector<std::string*>>();
+						*table[current] = *table[i];
+						table[current]->push_back(&(words[wNum]));
+					}
+				}
+			}
+		}
+		return table[targetSize];
+	}
+
+	std::shared_ptr<std::vector<std::vector<std::string*>>> allConstruct(std::vector<std::string>& words, std::string& target)
+	{
+		int targetSize = target.size();
+		std::vector<std::shared_ptr<std::vector<std::vector<std::string*>>>> table(targetSize + 1);
+		for (int i = 0; i <= targetSize; i++)
+		{
+			table[i] = std::make_shared<std::vector<std::vector<std::string*>>>();
+		}
+		table[0]->resize(1);
+		for (int i = 0; i < targetSize; i++)
+		{
+			for (int wNum = 0; wNum < words.size(); wNum++)
+			{
+				int current = i + words[wNum].size();
+				if (target.substr(i, current - i) == words[wNum])
+				{
+					std::vector<std::vector<std::string*>> newArr = *table[i];
+					int newSize = newArr.size();
+					for (int j = 0; j < newSize; j++)
+					{
+						newArr[j].push_back(&(words[wNum]));
+						table[current]->push_back(newArr[j]);
+					}
+
+				}
+			}
+		}
+		return table[targetSize];
+	}
 }
 
 namespace utils
@@ -341,6 +436,15 @@ namespace utils
 		if (inp != nullptr)
 			for (int i = 0; i < inp->size(); i++)
 				std::cout << (*inp)[i] << ", ";
+		else
+			std::cout << "nullptr";
+		std::cout << std::endl;
+	}
+	void log(std::shared_ptr<std::vector<std::string*>> inp)
+	{
+		if (inp != nullptr)
+			for (int i = 0; i < inp->size(); i++)
+				std::cout << (*(*inp)[i]) << ", ";
 		else
 			std::cout << "nullptr";
 		std::cout << std::endl;
@@ -364,20 +468,48 @@ namespace utils
 			std::cout << "nullptr";
 		std::cout << std::endl;
 	}
+	void log(std::shared_ptr<std::vector<std::vector<std::string*>>> inp)
+	{
+		if (inp != nullptr)
+		{
+			for (int i = 0; i < inp->size(); i++)
+			{
+				int size = (*inp)[i].size() - 1;
+				for (int j = 0; j < size; j++)
+				{
+					std::cout << (*(*inp)[i][j]) << ", ";
+				}
+				std::cout << (*(*inp)[i][size]);
+				std::cout << std::endl;
+			}
+		}
+		else
+			std::cout << "nullptr" << std::endl;
+		std::cout << std::endl;
+	}
 }
 
 int main()
 {
-	std::vector<int> nums = { 2,3 };
-	utils::log(algos::bestSumTab(7, nums));
-	nums = { 5,3,4,7 };
-	utils::log(algos::bestSumTab(7, nums));
-	nums = { 2,4 };
-	utils::log(algos::bestSumTab(7, nums));
-	nums = { 2,3,5 };
-	utils::log(algos::bestSumTab(8, nums));
-	nums = { 7,14 };
-	utils::log(algos::bestSumTab(300, nums));
+	std::vector<std::string> words = { "ab", "abc", "cd", "def", "abcd", "ef", "c"};
+	std::string input_word = "abcdef";
+	utils::log(algos::allConstruct(words, input_word));
+
+	words = { "bo", "rd", "ate", "t", "ska", "sk", "boar" };
+	input_word = "skateboard";
+	utils::log(algos::allConstruct(words, input_word));
+
+	words = { "a", "p", "ent", "enter", "ot", "o", "t" };
+	input_word = "enterapotentpot";
+	utils::log(algos::allConstruct(words, input_word));
+
+	words = { "e", "ee", "eee", "eeee", "eeeee" };
+	input_word = "eeeeeeeeeeeeeeeeeeeeee";
+	utils::log(algos::allConstruct(words, input_word));
+
+	words = { "purp", "p", "ur", "le", "purpl"};
+	input_word = "purple";
+	utils::log(algos::allConstruct(words, input_word));
 
 	
 	return 0;
